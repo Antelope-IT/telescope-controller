@@ -6,22 +6,19 @@ This project came about as a result of me inheriting a telescope with a German E
 
 The aim of this project was to see if it was possible to make the telescope mount work again and at the same time learn about microcontrollers and similar development boards. 
 
-# Health Warning
-The code and the schematics in this project work for me as I have built them in so far as the mount moves as expected. The project as it is presented here is not a replacement for consumer level motor drive its not very practical and its not been fully tested and proven to work; I am waiting to collect some other missing parts for the mount before it can be fully assembled with a telescope to test it in the field. 
-
-The expected problems revolve around how effectively the controller can drive the stepper motors at the right speed and the power draw while its doing that. These are points for further experiment and refinement and devlopement. 
-
-Under no circumstances use the contents of the Frizing document directly. It's a long time since I did anything like this and the first time I've done anything with that software and I really didn't have a clue what I was doing.  
-
-The bread board view looks to be an accurate representation of what I have built, in front of me, if you want to build this project or something based on it, then use the bread board view as a guide and check as you go that the links you are adding make sense. 
-
-The schematics view looks to be technically correct but don't use it as an examplar of how to layout a circuit diagram. 
-
-The pcb schematic should not be used under any circumstance. I have not used it to manufacture from and would recommend that you don't; it was purely a technical exercise to see if I could layout the board without crossing the beams. 
-
-You are welcome to use what you see here and to learn from my mistakes but I make no guarantees regards the quality, functionality or suitability of this project for your application. You can use and adapt the information,ideas and designs contained in this project but you do so entirely at your own risk.
-
 # Hardware
+The image below shows a basic breadboard layout as I built it, the layout is organic (as I added the components) rather than logical. A more logical layout would be to put the microcontroller and motor drive board at either end of the breadboard leaving the space between for the controls and indicators. This would result in shorter runs for the 8 control lines at the expense a slightly longer run for the I2C connection (shown green / white) which runs between the microcontroller and the motor drive board. Alternatively the motor drive and the microcontroller can be stacked which would remove the need for the long off board I2C. 
+
+The four push to make switches control the direction of travel of the telescope and sare connected to microcontroller digital inputs D4,D5,D6,D9. These have internal pull-up circuitry and so pull down to ground when pushed. 
+
+The four leds are used to indicate the direction of travel (its not obvious from the telescope due its speed of motion) these are connected to 4 digital outputs A2,A3,A4,A5 of the microcontroller. The leds are connected to ground via 220Ohm resistors to limit the current flow and therefore the brightness of the leds. It increasing the size of these resistors will reduce the brightness of the leds reducing light pollution in operation and help to preserve night vision.  
+
+The stepper motors (not shown) are connected to the two blocks at either end of the motor drive board. 
+
+A separate power supply for the stepper motors is connected via the 2.1mm barrel connector.
+
+A complete Fritzing breadboard and schematic layout can be found in the file controller.fzz in docs directory (See Health Warning). 
+
 ### Breadboard Layout 
 ![Telescope controller Breadboard Layout](https://github.com/Antelope-IT/telescope-controller/blob/master/docs/Telescope_Controller.png)
 
@@ -55,7 +52,37 @@ In the case of the M4 Express Feather microcontroller a 3.7v LiPo battery can be
 > The Adafruit Stepper + DC Motor Feather is capable of supplying 1.2A per coil/phase at voltages in the range 4.5v to 13.5v so for this application everything would appear to be within specification.
 
 # Software
+The code is written using CircuitPython version 5.3.0.
+
 ## Libraries
+The code has the folowing dependencies these are standard Adafruit libraries which can be found in the [CircuitPython libraries and drivers bundel](https://github.com/adafruit/Adafruit_CircuitPython_Bundle). Download the zip, extract it and copy the required libraries to the CircuitPy/lib folder as required.
+
+* Adafruit_Bus_Device
+* Adafruit_Register
+* Adafruit_PCA9685
+* Adafruit SimpleIO
+* Adafruit_Motor_Kit
+* Adafruit_Motor
+
+An additional dependency is the debouncer library this can be found in the [CircuitPython Community Bundle](https://github.com/adafruit/CircuitPython_Community_Bundle).
+
+* Adafruit_Debouncer 
+
 ## Calculations
 
 **_To be completed..._**
+
+# Health Warning
+The code and the schematics in this project work for me as I have built them in so far as the mount moves as expected. The project as it is presented here is not a replacement for consumer level motor drive its not very practical and its not been fully tested and proven to work; I am waiting to collect some other missing parts for the mount before it can be fully assembled with a telescope to test it in the field. 
+
+The expected problems revolve around how effectively the controller can drive the stepper motors at the right speed and the power draw while its doing that. These are points for further experiment and refinement and devlopement. 
+
+Under no circumstances use the contents of the Frizing document directly. It's a long time since I did anything like this and the first time I've done anything with that software and I really didn't have a clue what I was doing.  
+
+The bread board view looks to be an accurate representation of what I have built, in front of me, if you want to build this project or something based on it, then use the bread board view as a guide and check as you go that the links you are adding make sense. 
+
+The schematics view looks to be technically correct but don't use it as an examplar of how to layout a circuit diagram. 
+
+The pcb schematic should not be used under any circumstance. I have not used it to manufacture from and would recommend that you don't; it was purely a technical exercise to see if I could layout the board without crossing the beams. 
+
+You are welcome to use what you see here and to learn from my mistakes but I make no guarantees regards the quality, functionality or suitability of this project for your application. You can use and adapt the information,ideas and designs contained in this project but you do so entirely at your own risk.
