@@ -4,7 +4,7 @@ and the [Adafruit Stepper + DC Motor Feather wing](https://learn.adafruit.com/ad
 
 This project came about as a result of me inheriting a telescope with a German Equatorial Mount that was fitted with stepper motors for a motor drive but didn't have the controller box to power and control the stepper motors. 
 
-The aim of this project was to see if it was possible to make the telescope mount work again and at the same time learn about microcontrollers and similar development boards. 
+The aim of this project was to see if it was possible to make the telescope mount work again and at the same time learn about microcontrollers and the Arduino ecosystem.
 
 # Hardware
 The image below shows a basic breadboard layout as I built it, the layout is organic (as I added the components) rather than logical. A more logical layout would be to put the microcontroller and motor drive board at either end of the breadboard leaving the space between for the controls and indicators. This would result in shorter runs for the 8 control lines at the expense a slightly longer run for the I2C connection (shown green / white) which runs between the microcontroller and the motor drive board. Alternatively the motor drive and the microcontroller can be stacked which would remove the need for the long off board I2C. 
@@ -52,7 +52,15 @@ In the case of the M4 Express Feather microcontroller a 3.7v LiPo battery can be
 > The Adafruit Stepper + DC Motor Feather is capable of supplying 1.2A per coil/phase at voltages in the range 4.5v to 13.5v so for this application everything would appear to be within specification.
 
 # Software
-The code is written using CircuitPython version 5.3.0.
+The code is written in CircuitPython version 5.3.0. The microcontroller will automatically load and run code.py at startup. The code has a setup phase followed by a continuous loop.
+
+In the setup phase the hardware is initialised and timing constants are declared. The timing constants are used to divide the cycle rate of loop so that the stepper motors are advanced at the required intervals when required to move. Provided that the cycle rate of the loop is sufficiently faster than the rate of stepper motor movement this should be fine. 
+
+The defining timing constant is the raDelay constant - the calculation for which is shown below. This value is the delay in seconds between steps of the Right Ascension stepper motor needed to drive the telescope so that it tracks across the sky at the right speed (if I've calculated correctly). The limitations of the stepper motors used means that it can't operate as a goto motor drive - the motors and gearing mean it can't physically move fast enough. To this end RA movement is essentially stop or go, future developments might be build some means of finer adjustment. The DEC movement is simply for finer adjustment up and down this movement is four times the speed of the RA movement. The value four was selected at random because from experiment it's a rate known to work with the motors 
+
+The motor step rates are further divided by 32 to provide a clock rate to drive the indicator leds so that they flash when the motor is moving in indicated direction.
+
+More work could be done to refine and improve this code but it should be remembered that there is no Decimal library for CircuitPython and no Async library (AFAIK) so precision will be limited by the floating precision and the fastest rate at which the processor can traverse the loop of code. It also has to be remembered that not withstanding the limitations of precision inherent in the code there are also the limitations in the hardware; the stepper motors, gears etc. Hence the health warning regards this isn't a replacement for a consumer grade telescope motor drive.      
 
 ## Libraries
 The code has the folowing dependencies these are standard Adafruit libraries which can be found in the [CircuitPython libraries and drivers bundel](https://github.com/adafruit/Adafruit_CircuitPython_Bundle). Download the zip, extract it and copy the required libraries to the CircuitPy/lib folder as required.
@@ -67,6 +75,8 @@ The code has the folowing dependencies these are standard Adafruit libraries whi
 An additional dependency is the debouncer library this can be found in the [CircuitPython Community Bundle](https://github.com/adafruit/CircuitPython_Community_Bundle).
 
 * Adafruit_Debouncer 
+
+Add these libraries to the lib folder in CircuitPy directory before running the code.
 
 ## Calculations
 
