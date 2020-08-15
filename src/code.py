@@ -16,12 +16,14 @@ kit = MotorKit(steppers_microsteps=4)
 decDirection = stepper.BACKWARD
 decStyle = stepper.SINGLE
 decMove = False
-decDelay = 0.11332
+decDelay = 0.116867
+decMoving = False
 
 raDirection = stepper.FORWARD
 raStyle = stepper.SINGLE
 raMove = False
-raDelay = 0.11332
+raDelay = 0.116867
+raMoving = False
 
 def get_voltage(pin):
     return (pin.value * 3.3) / 65536 * 2
@@ -88,38 +90,43 @@ while True:
     decMove = (not buttonUp.value or not buttonDown.value) and (not (buttonUp.value and buttonDown.value))
 
     if decMove:
-        if not buttonUp.value:
-            decDirection = stepper.BACKWARD
-        elif not buttonDown.value:
-            decDirection = stepper.FORWARD
+        decDirection = stepper.FORWARD if buttonUp.value else stepper.BACKWARD
 
     if raMove:
         if (time.monotonic_ns() - raLastTicks > raRateTicks):
+            raLastTicks = time.monotonic_ns()
             numsteps = kit.stepper1.onestep(direction=raDirection, style=raStyle)
+            raMoving = True
             if numsteps % 32 == 0:
                 if raDirection == stepper.FORWARD:
                     ledRight.value = not ledRight.value
                 else:
                     ledLeft.value = not ledLeft.value
-            raLastTicks = time.monotonic_ns()
+
     else:
-        kit.stepper1.release()
-        ledRight.value = False
-        ledLeft.value = False
+        if raMoving:
+            kit.stepper1.release()
+            ledRight.value = False
+            ledLeft.value = False
+            raMoving = False
 
     if decMove:
         if (time.monotonic_ns() - decLastTicks > decRateTicks):
+            decLastTicks = time.monotonic_ns()
             numsteps = kit.stepper2.onestep(direction=decDirection, style=decStyle)
+            decMoving = True
             if numsteps % 32 == 0:
                 if decDirection == stepper.BACKWARD:
                     ledUp.value = not ledUp.value
                 else:
                     ledDown.value = not ledDown.value
-            decLastTicks = time.monotonic_ns()
+
     else:
-        kit.stepper2.release()
-        ledUp.value = False
-        ledDown.value = False
+        if decMoving:
+            kit.stepper2.release()
+            ledUp.value = False
+            ledDown.value = False
+            decMoving = False
 
     currentTime = time.monotonic_ns()
     interval = currentTime - currentTicks
@@ -128,7 +135,4 @@ while True:
         ledMain.value = not ledMain.value
         lastTicks = currentTicks
         battery_voltage = get_voltage(vbat_voltage)
-        print("VBat voltage: {:.2f}".format(battery_voltage))
-        #print(f"Up: {buttonUp.value} Down: {buttonDown.value} Left: {buttonLeft.value} Right: {buttonRight.value}")
-        #print(f"RA Trigger: {raTrigger}, RA Move: {raMove}")
-        print(f"Interval: {interval}")
+        print(f"Interval: {interval} VBat voltage: {battery_voltage:.2f}")
