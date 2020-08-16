@@ -1,47 +1,63 @@
-# Telescope-Controller
-This repository contains the source code for a simple telescope controller for a telescope with basic stepper motor drives. The controller uses an [Adafruit M4 Feather Express](https://learn.adafruit.com/adafruit-feather-m4-express-atsamd51/overview) microntroller
-and the [Adafruit Stepper + DC Motor Feather wing](https://learn.adafruit.com/adafruit-stepper-dc-motor-featherwing) motot drive. It should be possible to use any sbc or microcontroller development board that is capable of running CircuitPython. The software is written in CircuitPython as a simple control loop so is easy to follow and adapt with alternative libraries and languages to suit.
+# Telescope Drive Controller
+![Telescope controller Breadboard Layout](https://github.com/Antelope-IT/telescope-controller/blob/master/docs/Telescope_Controller.png)
+
+* [Overview](https://github.com/Antelope-IT/telescope-controller#Overview)
+* [Hardware](https://github.com/Antelope-IT/telescope-controller#Hardware)
+* [Software](https://github.com/Antelope-IT/telescope-controller#Software)
+* [Calculations](https://github.com/Antelope-IT/telescope-controller#Calculations)
+* [Future Work](https://github.com/Antelope-IT/telescope-controller#Future-Work)
+* [Health Warning](https://github.com/Antelope-IT/telescope-controller#Health-Warning)
+
+
+## Overview
+This repository contains the source code and design schematics for a simple telescope drive controller for a telescope with basic stepper motor drives. The controller uses an [Adafruit M4 Feather Express](https://learn.adafruit.com/adafruit-feather-m4-express-atsamd51/overview) microntroller
+and the [Adafruit Stepper + DC Motor Feather wing](https://learn.adafruit.com/adafruit-stepper-dc-motor-featherwing) motor drive. The software is written in CircuitPython but could be adapted for different languages.
 
 This project came about as a result of me inheriting a telescope with a German Equatorial Mount that was fitted with stepper motors for a motor drive but didn't have the controller box to power and control the stepper motors. 
 
-The aim of this project was to see if it was possible to make the telescope mount work again and at the same time learn about microcontrollers and the Arduino ecosystem.
+The aim of this project was to see if it is possible to make the telescope mount work again and at the same time learn about microcontrollers and the Arduino ecosystem. 
 
-# Hardware
-The image below shows a basic breadboard layout as I built it, the layout is organic (as I added the components) rather than logical. A more logical layout would be to put the microcontroller and motor drive board at either end of the breadboard leaving the space between for the controls and indicators. This would result in shorter runs for the 8 control lines at the expense a slightly longer run for the I2C connection (shown green / white) which runs between the microcontroller and the motor drive board. Alternatively the motor drive and the microcontroller can be stacked which would remove the need for the long off board I2C. 
+## Hardware
+The image above shows the breadboard layout, this layout is organic rather than logical. A more logical layout would be to put the microcontroller and motor drive board at either end of the breadboard leaving the space between for the control switches and indicators. This would result in shorter runs for the 8 control lines at the expense a slightly longer run for the I2C connection (shown green / white) which runs between the microcontroller and the motor drive board. Alternatively the motor drive and the microcontroller can be stacked which would remove the need for the long off board I2C connection at the expense of reduced accessibility for either the microcontoller board or the motor drive board (depending how they are stacked).
 
-The four push to make switches control the direction of travel of the telescope and sare connected to microcontroller digital inputs D4,D5,D6,D9. These have internal pull-up circuitry and so pull down to ground when pushed. 
+The direction of motion of the telescope is controlled via the four push to make switches. These are connected to microcontroller's digital inputs D4,D5,D6,D9. These have internal pull-up circuitry and so pull down to ground when pushed resulting a `False` when pushed. 
 
-The four leds are used to indicate the direction of travel (its not obvious from the telescope due its speed of motion) these are connected to 4 digital outputs A2,A3,A4,A5 of the microcontroller. The leds are connected to ground via 220Ohm resistors to limit the current flow and therefore the brightness of the leds. It increasing the size of these resistors will reduce the brightness of the leds reducing light pollution in operation and help to preserve night vision.  
+The four leds act as tell tales and indicate the direction of travel (its not obvious from the telescope due its speed of motion) these are connected to 4 digital outputs A2,A3,A4,A5 of the microcontroller. 
 
-The stepper motors (not shown) are connected to the two blocks at either end of the motor drive board. The right ascension stepper stepper motor is connected to the stepper 1 via the M1 and M2 terminals on motor drive and the declination motor is connected to stepper 2 via the M3 and M4 terminals. Looking at the top of the board - as seen in image of the bread board above stepper 1 is at the left hand end of the motor drive board and stepper 2 is at the right hand end.  
+The leds are connected to ground via 220 Ohm resistors to limit the current flow and therefore the brightness of the leds. Increasing the size of these resistors will help reduce the power consumption of the board and the brightness of the leds thereby reducing light pollution in operation and help to preserve night vision.  
 
-A separate power supply for the stepper motors is connected via the 2.1mm barrel connector.
+The stepper motors (not shown) are connected to the two connection blocks at either end of the motor drive board. The right ascension stepper motor is connected to stepper 1. The phases of the bipolar stepper motor is connected to the M1 and M2 terminals on motor drive board, respectively. Likewise, the declination stepper motor is connected to stepper 2 via the M3 and M4 terminals. 
 
-A complete Fritzing breadboard and schematic layout can be found in the file controller.fzz in docs directory (See Health Warning). 
+Looking from the top of the motor drive board (as seen in the bread board image above), stepper 1 is at the left hand end of the motor drive board and stepper 2 is at the right hand end.   
 
-### Breadboard Layout 
-![Telescope controller Breadboard Layout](https://github.com/Antelope-IT/telescope-controller/blob/master/docs/Telescope_Controller.png)
+A separate 6v 2A power supply provides the power for the stepper motors and is connected via the 2.1mm barrel connector.
 
-## Parts List
-The parts lists is split into two sections; essential and optional. Although listed as essential this is only because the code has been written to work with this set of components. All parts can be replaced with compatible components and the code can be modified to use the requisite compatible libraries. 
+A complete Fritzing breadboard and schematic layout can be found in the file controller.fzz in [docs](https://github.com/Antelope-IT/telescope-controller/tree/master/docs) directory (See Health Warning). 
 
-The optional components are listed with the intention of making the project more portable - i.e. disconnected from the main grid. With this in mind a suitably large usb battery pack with two outputs can be used to power the microcontroller and motor drive boards along with A USB 5v to 6v buck converter to power the stepper motors.* 
+### Components:
+The parts lists is split into essential and optional components. Essential components represent the minimum required to make the solution work. 
+
+The optional components listed allow the project to be more portable; disconnected from the main grid. With this in mind a suitably large usb battery pack with two outputs can be used to power the microcontroller and motor drive board simultaneously. A USB 5v to 6v buck converter is required to convert the 5v output from the battery pack to the 6v required to power the stepper motors.* 
 
 In the case of the M4 Express Feather microcontroller a 3.7v LiPo battery can be connected to the microcontroller to power both the microcontroller and the motor drive board (logic only). This leaves the battery power pack free to power just the stepper motors.
 
-### Essential
-* Microntroller [Adafruit M4 Feather Express](https://learn.adafruit.com/adafruit-feather-m4-express-atsamd51/overview)
-* Motor Drive board [Adafruit Stepper + DC Motor Feather wing](https://learn.adafruit.com/adafruit-stepper-dc-motor-featherwing)
-* 2.1mm Barrel connector (female) - centre positive
-* 4 x 3mm leds (red)
-* 4 x push to make switches
+All parts can be replaced with functionally compatible components and the code can be modified to suit.
+
+#### Essential
+* Microntroller: [Adafruit M4 Feather Express](https://learn.adafruit.com/adafruit-feather-m4-express-atsamd51/overview)
+* Motor Drive board: [Adafruit Stepper + DC Motor Feather wing](https://learn.adafruit.com/adafruit-stepper-dc-motor-featherwing)
+* Motor Power Supply: 6v 1A+ Power supply with 2.1mm barrel connector (male)
+* Microntolller Power Supply: USB Power supply
+* Connector for Motor Power: 2.1mm Barrel connector (female) - centre positive
+* Stepper motor leads: 6p4c RJ11/RJ14 terminated
+* Indicator LEDS: 4 x 3mm LED (red)
 * 4 x 220 Ohm Resistors or higher for reduced light polution
-* 6v 1A+ Power supply with 2.1mm barrel connector (male)
-* USB Power supply
-### Optional (Improved portability)
-* USB Battery Pack
+* Control Switches: 4 x push to make switches
+
+#### Optional
+* USB Battery Pack 5V @ 3A 
 * 3.7v LiPo battery
-* Ripcord 5v -> 6v USB voltage booster with 2.1mm barrel connector (male)
+* Ripcord 5v -> 6v USB buck converter with 2.1mm barrel connector (male)
 
 > *NB. This assumes that the buck converter is capable of supplying the power and sufficient current to drive the stepper motors. In my case I knew the original motor drive kit was designed to run from a 4 x D Cell battery pack providing a nominal 6v.
 >
@@ -51,19 +67,19 @@ In the case of the M4 Express Feather microcontroller a 3.7v LiPo battery can be
 >
 > The Adafruit Stepper + DC Motor Feather is capable of supplying 1.2A per coil/phase at voltages in the range 4.5v to 13.5v so 0.4A at 6v is well within the operating range of the device.
 
-# Software
-The code is written in CircuitPython version 5.3.0. The microcontroller will automatically load and run code.py at startup. The code has a setup phase followed by a continuous loop. The code depends on a number of libraries(see below).
+## Software
+The code is written in CircuitPython version 5.3.0. The microcontroller will automatically load and run [code.py](https://github.com/Antelope-IT/telescope-controller/blob/master/src/code.py) at startup. The code has a setup phase followed by a continuous loop. The code has a number of dependencies (see below).
 
 In the setup phase the hardware is initialised and timing constants are declared. The timing constants are used to divide the cycle rate of loop so that the stepper motors are advanced at the calculated intervals. Provided that the cycle rate of the loop is sufficiently faster than the rate of stepper motor movement this should be fine.
 
-The defining timing constant is the raDelay constant - the calculation for which is shown below. This value is the delay in seconds between steps of the Right Ascension stepper motor needed to drive the telescope so that it tracks across the sky at the right speed (if I've calculated correctly). The limitations of the stepper motors used means that it can't operate as a goto motor drive - the motors and gearing mean it can't physically move fast enough. To this end RA movement is essentially stop or go, future developments might be to add some means of finer adjustment. The DEC movement is simply for finer adjustment up and down this movement is four times the speed of the RA movement. The value four was selected because its known to give a rate of movement within the operating range of the stepper motors.
+The defining timing constant is the raDelay constant - the calculation for which is shown below. This value is the delay in seconds between steps of the Right Ascension stepper motor needed to drive the telescope so that it tracks across the sky at the right speed (if the calculation is correct). The limitations of the stepper motors used means that it can't operate as a goto motor drive - the motors and gearing mean it can't physically move fast enough. To this end RA movement is essentially stop or go, future developments might be to add some means of finer adjustment. The DEC movement is simply for finer adjustment up and down this movement is four times the speed of the RA movement. The value four was selected because its known to give a rate of movement within the operating range of the stepper motors.
 
 The motor step rates are further divided by 8 ( 4 x microsteps per single step / 32 ) to provide a clock rate to drive the indicator leds so that they flash when the motor is moving in indicated direction.
 
-More work could be done to refine and improve this code but it should be remembered that there is no Decimal library for CircuitPython and no Async library (AFAIK) so precision will be limited by the floating precision and the fastest rate at which the processor can traverse the loop of code. It also has to be remembered that not withstanding the limitations inherent in the code, there are also the limitations in the hardware; the stepper motors, gears etc. Hence the health warning regards this isn't a replacement for a consumer grade telescope motor drive.      
+More work could be done to refine and improve this code but it should be remembered that there is no Decimal library for CircuitPython and no Async library (AFAIK) so precision will be limited by the floating precision and the fastest rate at which the processor can traverse the loop of code. It also has to be remembered that not withstanding the limitations inherent in the code, there are also the limitations in the hardware; the stepper motors, gears etc.
 
-## Libraries
-The code has the folowing dependencies these are standard Adafruit libraries which can be found in the [CircuitPython libraries and drivers bundel](https://github.com/adafruit/Adafruit_CircuitPython_Bundle). Download the zip, extract it and copy the required libraries to the CircuitPy/lib folder as required.
+### Libraries
+The code has the folowing dependencies these are standard Adafruit libraries which can be found in the [CircuitPython libraries and drivers bundle](https://github.com/adafruit/Adafruit_CircuitPython_Bundle). Download the zip, extract it and copy the libraries to the CircuitPy/lib folder as required.
 
 * Adafruit_Bus_Device
 * Adafruit_Register
@@ -76,11 +92,11 @@ An additional dependency is the debouncer library this can be found in the [Circ
 
 * Adafruit_Debouncer 
 
-Add these libraries to the lib folder in CircuitPy directory before running the code.
+Add these libraries to the `\lib` folder in CircuitPy directory before running the code.
 
 ## Calculations
 
-These calculations serve two purposes: they remind me how I arrived at the figures in the code and for anyone wanting to replicate this project they should serve as a guide on how to adapt the code to their own hardware.
+These calculations serve as a reminder as to how the figures in the code were arrived at, and for anyone wanting to replicate this project it should serve as a guide as to how to adapt the code to their own hardware (different stepper motors, different gearing).
 
 ```
   Stepper motor:
@@ -101,9 +117,9 @@ These calculations serve two purposes: they remind me how I arrived at the figur
     
     So to rotate the telescope head at the rate of 1 rotation per day the stepper motor needs to be driven at:
     
-    737280 / 86400 steps/sec  = 8.5333 s/s
+    737280 / 86400 steps/sec  = 8.5333 steps/sec
     
-    To achieve this we need a step every 1 / 8.5333s = 0.1171875s <= This gives the RA delay figure 
+    This translates to 1 step every 1 / 8.5333s = 0.1171875s <= This gives the RA delay figure 
     
   Refinement:
     The sidereal day - the length of time before the stars are in the same place relative to the earth changes through the year but the mean sidereal day is
@@ -115,9 +131,16 @@ These calculations serve two purposes: they remind me how I arrived at the figur
     
     NB. The length of a sidereal day, as given, is only an approximation. Comparing the results of using the two RA Delay figures, after running the mount for a whole day, the difference in pointing angle is just less than 1 degree.
 ```
+## Future Work
+### Software:
+1. The code could be re-written using Arduino C This supports Asynchronous motor control and would allow for easier communication with a host computer via the USB connection allowing alternative modes of control.
+2. Refinement of the code to improve performance and add features such as fine grained control of the telescope; RA adjustment as well as DEC adjustment. 
+### Hardware:
+1. Complete the hardware build by moving it to strip board or similar.
+2. Encasing the components in a suitable enclosure to protect it from the elements.
 
-# Health Warning
-The code and the schematics in this project work for me as I have built them in so far as the mount moves as expected. The project as it is presented here is not a replacement for a consumer level motor drive its not very practical and its not been fully tested and proven to work; I am waiting to collect some other missing parts for the mount before it can be fully assembled with a telescope to test it in the field. 
+## Health Warning
+The code and the schematics in this project work for me as I have built them; the mount moves as expected. The project as it is presented here is not a replacement for a consumer level motor drive; its not very practical and its not fully tested - I am waiting to collect some missing parts for the mount before it can be fully assembled with a telescope to test it in the field. 
 
 The expected problems revolve around how effectively the controller can drive the stepper motors at the right speed and the power draw while its doing that. These are points for further experiment, refinement and devlopement. 
 
