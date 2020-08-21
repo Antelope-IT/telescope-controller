@@ -44,10 +44,10 @@ In the case of the M4 Express Feather microcontroller a 3.7v LiPo battery can be
 All parts can be replaced with functionally compatible components and the code can be modified to suit.
 
 #### Essential
-* Microntroller: [Adafruit M4 Feather Express](https://learn.adafruit.com/adafruit-feather-m4-express-atsamd51/overview)
+* Microcontroller: [Adafruit M4 Feather Express](https://learn.adafruit.com/adafruit-feather-m4-express-atsamd51/overview)
 * Motor Drive board: [Adafruit Stepper + DC Motor Feather wing](https://learn.adafruit.com/adafruit-stepper-dc-motor-featherwing)
 * Motor Power Supply: 6v 1A+ Power supply with 2.1mm barrel connector (male)
-* Microntolller Power Supply: USB Power supply
+* Microcontolller Power Supply: USB Power supply
 * Connector for Motor Power: 2.1mm Barrel connector (female) - centre positive
 * Stepper motor leads: 6p4c RJ11/RJ14 terminated
 * Indicator LEDS: 4 x 3mm LED (red)
