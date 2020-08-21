@@ -47,7 +47,7 @@ All parts can be replaced with functionally compatible components and the code c
 * Microcontroller: [Adafruit M4 Feather Express](https://learn.adafruit.com/adafruit-feather-m4-express-atsamd51/overview)
 * Motor Drive board: [Adafruit Stepper + DC Motor Feather wing](https://learn.adafruit.com/adafruit-stepper-dc-motor-featherwing)
 * Motor Power Supply: 6v 1A+ Power supply with 2.1mm barrel connector (male)
-* Microcontolller Power Supply: USB Power supply
+* Microcontoller Power Supply: USB Power supply
 * Connector for Motor Power: 2.1mm Barrel connector (female) - centre positive
 * Stepper motor leads: 6p4c RJ11/RJ14 terminated
 * Indicator LEDS: 4 x 3mm LED (red)
@@ -76,7 +76,7 @@ The defining timing constant is the raDelay constant - the calculation for which
 
 The motor step rates are further divided by 8 ( 4 x microsteps per single step / 32 ) to provide a clock rate to drive the indicator leds so that they flash when the motor is moving in indicated direction.
 
-More work could be done to refine and improve this code but it should be remembered that there is no Decimal library for CircuitPython and no Async library (AFAIK) so precision will be limited by the floating precision and the fastest rate at which the processor can traverse the loop of code. It also has to be remembered that not withstanding the limitations inherent in the code, there are also the limitations in the hardware; the stepper motors, gears etc.
+More work could be done to refine and improve this code but as there is no Decimal library for CircuitPython and no Async library (AFAIK) precision will be limited by the precision of the floating point library and the fastest rate at which the processor can traverse the loop of code. It also has to be remembered that not withstanding the limitations inherent in the code, there are also the limitations in the hardware; the stepper motors, gears etc.
 
 ### Libraries
 The code has the folowing dependencies these are standard Adafruit libraries which can be found in the [CircuitPython libraries and drivers bundle](https://github.com/adafruit/Adafruit_CircuitPython_Bundle). Download the zip, extract it and copy the libraries to the CircuitPy/lib folder as required.
