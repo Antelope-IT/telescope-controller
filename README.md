@@ -61,9 +61,9 @@ All parts can be replaced with functionally compatible components and the code c
 
 > *NB. This assumes that the buck converter is capable of supplying the power and sufficient current to drive the stepper motors. In my case I knew the original motor drive kit was designed to run from a 4 x D Cell battery pack providing a nominal 6v.
 >
-> The stepper motors are bipolar and by measurement the resistance for each phase was approximately 17-18 Ohms By Ohms law the current draw for each phase is expected to be 0.35A. If all 4 phases (2 x motors x 2 phases) are energised at the same time the current draw would be 1.4A. 
+> The stepper motors are bipolar and by measurement the resistance for each phase was approximately 17-18 Ohms By Ohms law the current draw for each phase is expected to be 0.35A. If all 4 phases (2 x motors x 2 phases) are energised at the same time the current draw would be 1.4A.     
 >
-> The buck converter I'm using is rated at 2A and the battery power pack is rated at 3A so there should be sufficient headroom and room for error. In practice, in operation the current draw was measured at the output of the battery pack to be 0.9A with both steppers holding.
+> The buck converter I'm using is rated at 9W => 1.5A and the battery power pack is rated at 3A so there should be sufficient headroom and room for error. In practice, in operation the current draw was measured at the output of the battery pack to be 0.9A with both steppers holding.
 >
 > The Adafruit Stepper + DC Motor Feather is capable of supplying 1.2A per coil/phase at voltages in the range 4.5v to 13.5v so 0.4A at 6v is well within the operating range of the device.
 
@@ -103,7 +103,7 @@ These calculations serve as a reminder as to how the figures in the code were ar
     steps / rotation (input shaft) = 48
     gear ratio input shaft : output shaft = 120:1
   
-    Steps per rotation = 48 x 120 = 5760 steps per full rotatio of the Stepper motor drive(output) shaft 
+    Steps per rotation = 48 x 120 = 5760 steps per full rotation of the Stepper motor drive(output) shaft 
     
     The figures of 48 and 120 were found online but could be wrong - no identification markings on the stepper motors so no way to know for sure.
     The figure of 5760 has ben confirmed by experiment (to a good approximation).
@@ -138,9 +138,11 @@ These calculations serve as a reminder as to how the figures in the code were ar
 ### Hardware:
 1. Complete the hardware build by moving it to strip board or similar.
 2. Encasing the components in a suitable enclosure to protect it from the elements.
+3. Connections for the stepper motor drive leads seem fragile; replace with fly leads to off board female RJ11 6P4C connector and terminate both ends of the stepper motor drive leads with RJ11 connectors.
+4. In general reduce light pollution from (leds), but add stepper motor power indicator and very dim led just to illuminate buttons. 
 
 ## Health Warning
-The code and the schematics in this project work for me as I have built them; the mount moves as expected. The project as it is presented here is not a replacement for a consumer level motor drive; its not very practical and its not fully tested - I am waiting to collect some missing parts for the mount before it can be fully assembled with a telescope to test it in the field. 
+The code and the schematics in this project work for me as I have built them; the mount moves as expected. The project as it is presented here is not a replacement for a consumer level motor drive; ~~its not very practical and~~ its not fully tested ~~- I am waiting to collect some missing parts for the mount before it can be fully assembled with a telescope to test it in the field.~~ and I have only done some initial testing but I can confirm that it does indeed work I was able to track Jupiter for an hour or so without problems. I suspect that at higher magnifications (4mm eyepiece) there is some detectable drift although this could just be me knocking the telescope while struggling to focus at the higher magnification. As noted above the stepper motor lead connections the seem fragile: the fine wires seem prone to break this could be resolved as noted above or by just applying some stress relief by way of added cable ties could work. Other than that the solution is more practical than I first thought, as it all just sits in the accessories tray of the mount. There are some images [here](https://github.com/Antelope-IT/telescope-controller/blob/master/docs) provided for illustration. 
 
 The expected problems revolve around how effectively the controller can drive the stepper motors at the right speed and the power draw while its doing that. These are points for further experiment, refinement and devlopement. 
 
