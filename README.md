@@ -10,7 +10,7 @@
 
 
 ## Overview
-This repository contains the source code and design schematics for a simple telescope drive controller for a telescope with basic stepper motor drives. The controller uses an [Adafruit M4 Feather Express](https://learn.adafruit.com/adafruit-feather-m4-express-atsamd51/overview) microntroller
+This repository contains the source code and design schematics for a simple telescope drive controller for a telescope with basic stepper motor drives. The controller uses an [Adafruit M4 Feather Express](https://learn.adafruit.com/adafruit-feather-m4-express-atsamd51/overview) microcontroller
 and the [Adafruit Stepper + DC Motor Feather wing](https://learn.adafruit.com/adafruit-stepper-dc-motor-featherwing) motor drive. The software is written in CircuitPython but could be adapted for different languages.
 
 This project came about as a result of me inheriting a telescope with a German Equatorial Mount that was fitted with stepper motors for a motor drive but didn't have the controller box to power and control the stepper motors. 
